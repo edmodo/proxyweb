@@ -233,6 +233,19 @@ mysql_users:
 		backend=1
 		frontend=1
 		max_connections=10000
+	},
+	{
+		username="sysbench"
+		password="sysbench"
+		active=1
+		use_ssl=0
+		default_hostgroup=1
+		schema_locked=0
+		transaction_persistent=1
+		fast_forward=0
+		backend=1
+		frontend=1
+		max_connections=10000
 	}
 )
 mysql_query_rules:

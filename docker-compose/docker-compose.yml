@@ -94,7 +94,7 @@ services:
       - proxyweb_test
 
   proxysql_donor:
-    image: proxysql/proxysql
+    image: proxysql/proxysql:2.1.0
     ports:
       - "16032:6032"
       - "13306:6033"
@@ -119,7 +119,7 @@ services:
       - proxyweb_test
 
   proxysql_satellite:
-    image: proxysql/proxysql
+    image: proxysql/proxysql:2.1.0
     ports:
       - "16033:6032"
       - "13307:6033"
@@ -143,7 +143,7 @@ services:
       - proxyweb_test
 
   proxysql_standalone:
-    image: proxysql/proxysql
+    image: proxysql/proxysql:2.1.0
     ports:
       - "16034:6032"
       - "13308:6033"
@@ -207,5 +207,46 @@ services:
         condition: service_healthy
     networks:
       - proxyweb_test
+
+  sysbench:
+    image: "perconalab/sysbench"
+    depends_on:
+      proxysql_standalone:
+        condition: service_healthy
+    command: >
+        bash -c "
+            set -o xtrace
+            sleep 10
+            sysbench \
+                --db-driver=mysql \
+                --mysql-host=proxysql_standalone \
+                --mysql-port=6033 \
+                --mysql-user=sysbench \
+                --mysql-password=sysbench \
+                --mysql-db=sbtest \
+                /usr/share/sysbench/oltp_read_write.lua \
+                prepare
+            sysbench \
+                --rate=20 \
+                --threads=2 \
+                --report-interval=10 \
+                --time=0 \
+                --events=0 \
+                --rand-type=pareto \
+                --db-driver=mysql \
+                --db-ps-mode=disable \
+                --skip-trx=true \
+                --mysql-ignore-errors=all \
+                --mysql-host=proxysql_standalone \
+                --mysql-port=6033 \
+                --mysql-user=sysbench \
+                --mysql-password=sysbench \
+                --mysql-db=sbtest \
+                /usr/share/sysbench/oltp_read_write.lua \
+                run
+              "
+    networks:
+      - proxyweb_test
+
 networks:
   proxyweb_test:

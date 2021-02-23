@@ -99,6 +99,19 @@ This will start  the following services:
 | Goss   | 8000     | goss     | 8000|
 | ProxyWeb   | 5000     | proxyweb    | 5000|
 
+You can add sysbench to the test cluster:
+```
+make sysbench-up
+```
+Or stop sysbench:
+```
+make sysbench-down
+```
+The sysbench output can be access with:
+```
+make sysbench-logs
+```
+
 After all the containers are up and  running, go to:
 [http://127.0.0.1:5000/proxysql_donor/main/global_variables/](http://127.0.0.1:5000/proxysql_donor/main/global_variables//)
 
@@ -234,7 +247,7 @@ make compose-up
 ```
 
 ###Goss
-Goss is a YAML based serverspec alternative tool for validating a server’s configuration. 
+Goss is a YAML based serverspec alternative tool for validating a server’s configuration.
 For the sake of simplicity a small web frontend was added in order to represent the health/status of our services.
 
 It's running at  http://127.0.0.1:8000
@@ -242,7 +255,7 @@ It's running at  http://127.0.0.1:8000
 Some  services  are in `failed` status initially as the purpose of this tutorial is to set the donor and satellite ProxySQLs up.
 You can check if the setup was successful by visiting this page again.
 
-The status checks are executed when the page is hit/reloaded. 
+The status checks are executed when the page is hit/reloaded.
 
 ![Goss](misc/images/goss.jpg)
 
