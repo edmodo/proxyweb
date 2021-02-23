@@ -99,7 +99,9 @@ This will start  the following services:
 | Goss   | 8000     | goss     | 8000|
 | ProxyWeb   | 5000     | proxyweb    | 5000|
 
-You can add sysbench to the test cluster:
+
+You can add sysbench to the test cluster, it runs on the preconfigured proxysql_standalone instance.
+
 ```
 make sysbench-up
 ```
@@ -221,7 +223,7 @@ mysql -vvv -uworld -pworld -P 13307 -h 127.0.0.1  world -e "select * from world.
 
 The proxysql_standalone ProxySQL instance have all the above (mysql_servers, user, routing) minus the cluster config readily available when it starts.
 
-###Orchestrator
+### Orchestrator
 
 Orchestrator is running at  http://127.0.0.1:3000
 
@@ -246,7 +248,7 @@ make compose-destroy
 make compose-up
 ```
 
-###Goss
+### Goss
 Goss is a YAML based serverspec alternative tool for validating a server’s configuration.
 For the sake of simplicity a small web frontend was added in order to represent the health/status of our services.
 
@@ -360,8 +362,11 @@ A random `SECRET_KEY` is generated when using the dockerized ProxyWeb or when ru
 Thanks for Rene Cannao and the SysOwn team for the wonderful [ProxySQL](https://proxysql.com/).
 
 ProxyWeb is using the following projects:
+- Percona Server 5.7
 - Bootstrap 4.4.1
 - Mdbootstrap 4.16
 - Font Awesome 5.8.2
 - Google Fonts
-- dbdeployer
+- goss
+- sysbench 
+
