@@ -5,6 +5,7 @@ up:
 	docker-compose exec db3 /setup_topology.sh slave
 	docker-compose exec db4 /setup_topology.sh slave
 	docker-compose exec orchestrator /usr/local/orchestrator/orchestrator -c discover -i db1
+	@cat banner.txt
 
 down:
 	docker-compose down --volumes

@@ -1,0 +1,14 @@
+******************  INFO  ****************** 
+*                                          *
+* http://<ip_address>:5000 -  ProxyWeb     * 
+* http://<ip_address>:3000 -  Orchestrator * 
+* http://<ip_address>:8000 -  HealthCheck  * 
+*                                          * 
+* Start sysbench:                          * 
+* make sysbench-up                         * 
+* Logs:                                    *
+* make sysbench-logs                       * 
+*                                          * 
+* Stop/Destroy the test env:               * 
+* make compose-down                        * 
+********************************************
