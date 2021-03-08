@@ -1,0 +1,58 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: proxyweb-config-map
+  namespace: proxyweb
+data:
+  config.yml: |
+    global:
+      hide_tables: [ 'mysql_users' ]
+      default_server: "proxysql_app1"
+      read_only: false
+
+    servers:
+      proxysql_app1:
+        dsn:
+          - { "host": "127.0.0.1", "user": "p-admin-user", "passwd": "p-admin-password", "port": "6032", "db": "main"}
+        read_only: true
+
+      proxysql_app2:
+        dsn:
+          - { "host": "127.0.0.1", "user": "p-admin-user", "passwd": "p-admin-password", "port": "6032", "db": "main"}
+        read_only: true
+    
+    misc:
+      adhoc_report:
+        - { "title": "Top 10 SELECTs by exec_time",
+            "info": "Looking at queries with big exec_time(number of execution * time to run) is a good point to start when optimizing queries.",
+            "sql": "SELECT digest,username,schemaname, SUBSTR(digest_text,0,80),count_star,sum_time, count_star*sum_time as exec_time FROM stats_mysql_query_digest WHERE digest_text LIKE 'SELECT%' ORDER BY count_star*sum_time DESC LIMIT 10;"
+        }
+
+        - { "title": "Top 10 SELECTs by sum_time",
+            "info": "While eliminating the long running queries is a usually a good idea, these queries don't always have a huge impact on the overall latency (the user experience).",
+            "sql": "SELECT digest,username,schemaname, SUBSTR(digest_text,0,80),count_star,sum_time FROM stats_mysql_query_digest WHERE digest_text LIKE 'SELECT%' ORDER BY sum_time DESC LIMIT 10;"
+        }
+
+        - { "title": "Top 10 SELECTs by count_star",
+            "info": "Caching/rewriting/even removing  frequently running queries can improve the overall performance significantly. ProxySQL support all the mentioned methods. Example: it's a good idea to cache queries often issued by connectors like `^SELECT @@max_allowed_packet`",
+            "sql": "SELECT digest,username,schemaname, SUBSTR(digest_text,0,80),count_star,sum_time FROM stats_mysql_query_digest WHERE digest_text LIKE 'SELECT%' ORDER BY count_star DESC LIMIT 10;"
+        }
+
+        - { "title": "Schemas with the most DMLs",
+            "info": "This helps identify the schemas getting the most writes",
+            "sql": "SELECT schemaname, sum(sum_time) as time_spent, sum(count_star) as sum_count_star   FROM stats_mysql_query_digest where digest_text LIKE 'INSERT%' or digest_text like 'DELETE%' or digest_text like 'UPDATE%' group by schemaname order by time_spent desc;" }
+
+        - { "title": "Top 5 schemas by exec_time",
+            "info": "List of the schemas with the highest overall exec_time",
+            "sql": "SELECT schemaname, count_star*sum_time as exec_time   FROM stats_mysql_query_digest group by schemaname order by count_star*sum_time desc limit 5;" }
+
+        - { "title": "Send the top 5 SELECTS to the readers",
+            "info": "Don't send  selects to the readers without checking the impact first as the app might read back the data immediately writing it.",
+            "sql": "select \"replace into mysql_query_rules (username,schemaname,destination_hostgroup,active,apply,digest) values('\" || st.username || \"','\" || st.schemaname || \"',12,1,1,'\" ||  st.digest || \"');\" from stats_mysql_query_digest st left join runtime_mysql_query_rules qr on st.digest = qr.digest where  qr.rule_id is null  and digest_text LIKE 'SELECT%' ORDER BY count_star desc limit 5;" }
+
+    flask:
+      SECRET_KEY: "12345678901234567890"
+      SEND_FILE_MAX_AGE_DEFAULT: 0
+      TEMPLATES_AUTO_RELOAD: "True"
+
+
