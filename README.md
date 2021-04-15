@@ -21,8 +21,7 @@ Open Source Web UI for [ProxySQL](https://proxysql.com/)
 # Setup
 
 ## Install ProxyWeb next to ProxySQL
-With Doc
-ker:
+With Docker:
 ```
 docker run -h proxyweb --name proxyweb --network="host" -d proxyweb/proxyweb:latest
 ```
@@ -117,7 +116,7 @@ make sysbench-logs
 After all the containers are up and  running, go to:
 [http://127.0.0.1:5000/proxysql_donor/main/global_variables/](http://127.0.0.1:5000/proxysql_donor/main/global_variables//)
 
-In this example we're going to set up ProxySQL with 3 MySQL backend servers with some basic query routing.
+In this example we're going to set up ProxySQL with 4 MySQL backend servers with some basic query routing.
 Once this is done, another ProxySQL server will be added as a [ProxySQL cluster](https://proxysql.com/blog/proxysql-cluster/)
 
 ### Configure the proxysql_donor:
