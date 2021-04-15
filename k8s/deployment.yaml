@@ -1,0 +1,48 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: proxyweb
+  name: proxyweb
+  namespace: proxyweb
+spec:
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: proxyweb
+  template:
+    metadata:
+      labels:
+        app: proxyweb
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: proxyweb
+        image: proxyweb/proxyweb:latest
+        env:
+        - name: PROXYSQL_ADMIN_USER
+          valueFrom:
+            secretKeyRef:
+              name: proxyweb-secret
+              key: p-admin-user
+        - name: PROXYSQL_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: proxyweb-secret
+              key: p-admin-password
+        ports:
+          - name: proxyweb
+            containerPort: 5000
+        volumeMounts:
+        - name: proxyweb-conf
+          mountPath: /config
+      volumes:
+      - name: proxyweb-conf
+        configMap:
+          name: proxyweb-config-map

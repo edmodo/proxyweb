@@ -7,6 +7,10 @@ GUNICORN_THREADS=2
 #Generate a unique secret key for flask
 SECRET_KEY=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)
 sed -i "s/12345678901234567890/${SECRET_KEY}/" ${CONFIG}
+
+sed -i -e "s/p-admin-user/${PROXYSQL_ADMIN_USER}/g" ${CONFIG}
+sed -i -e "s/p-admin-password/${PROXYSQL_ADMIN_PASSWORD}/g" ${CONFIG}
+
 echo
 if [ -n "${WEBSERVER_PORT}" ]; then
     GUNICORN_PORT=${WEBSERVER_PORT}

@@ -9,6 +9,7 @@ WORKDIR /app
 RUN pip3 install -r requirements.txt
 
 COPY . /app
+COPY ./config/config.yml /config/config.yml
 RUN cp /app/misc/entry.sh /app/
 RUN chmod 755 /app/entry.sh 
 
