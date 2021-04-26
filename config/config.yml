@@ -6,9 +6,9 @@ global:
 servers:
   proxysql:
     dsn:
-      - { "host": "127.0.0.1", "user": "arthur", "passwd": "zaphod", "port": "16034", "db": "main"}
-
-
+      - { "host": "127.0.0.1", "user": "admin", "passwd": "admin", "port": "6032", "db": "main"}
+    #hide_tables: [ 'mysql_aws_aurora_hostgroups', 'mysql_server_aws_aurora_failovers', 'mysql_server_aws_aurora_check_status', 'mysql_server_group_replication_log', 'mysql_galera_hostgroups', 'runtime_mysql_galera_hostgroups', 'mysql_server_aws_aurora_log' , 'mysql_server_aws_aurora_log', 'runtime_mysql_aws_aurora_hostgroups', 'runtime_mysql_server_aws_aurora_failovers', 'runtime_mysql_server_aws_aurora_check_status', 'runtime_mysql_server_group_replication_log', 'runtime_mysql_server_aws_aurora_log', 'runtime_mysql_server_aws_aurora_log', 'mysql_collations', 'mysql_firewall_whitelist_rules', 'mysql_firewall_whitelist_sqli_fingerprints', 'mysql_firewall_whitelist_users', 'mysql_query_rules_fast_routing', 'mysql_group_replication_hostgroups', 'restapi_routes', 'runtime_mysql_collations', 'runtime_mysql_firewall_whitelist_rules', 'runtime_mysql_firewall_whitelist_sqli_fingerprints', 'runtime_mysql_firewall_whitelist_users', 'runtime_mysql_query_rules_fast_routing', 'runtime_mysql_group_replication_hostgroups', 'runtime_restapi_routes', 'scheduler','mysql_server_galera_log' ]
+    
 #   proxysql_local_docker_no_host:
 #     dsn:
 #       - { "host": "172.17.0.1", "user": "radmin", "passwd": "radmin", "port": "6032", "db": "main"}
@@ -20,7 +20,7 @@ servers:
 #   proxysql_remote_with_hidden_tables:
 #     dsn:
 #       - { "host": "10.77.10.24", "user": "arthur", "passwd": "zaphod", "port": "6032", "db": "main"}
-#     hide_tables: ['mysql_aws_aurora_hostgroups', 'mysql_server_aws_aurora_failovers', 'mysql_server_aws_aurora_check_status', 'mysql_server_group_replication_log', 'mysql_server_aws_aurora_log' , 'mysql_server_aws_aurora_log', 'runtime_mysql_aws_aurora_hostgroups', 'runtime_mysql_server_aws_aurora_failovers', 'runtime_mysql_server_aws_aurora_check_status', 'runtime_mysql_server_group_replication_log', 'runtime_mysql_server_aws_aurora_log', 'runtime_mysql_server_aws_aurora_log']
+#     hide_tables: [ 'mysql_aws_aurora_hostgroups', 'mysql_server_aws_aurora_failovers', 'mysql_server_aws_aurora_check_status', 'mysql_server_group_replication_log', 'mysql_galera_hostgroups', 'runtime_mysql_galera_hostgroups', 'mysql_server_aws_aurora_log' , 'mysql_server_aws_aurora_log', 'runtime_mysql_aws_aurora_hostgroups', 'runtime_mysql_server_aws_aurora_failovers', 'runtime_mysql_server_aws_aurora_check_status', 'runtime_mysql_server_group_replication_log', 'runtime_mysql_server_aws_aurora_log', 'runtime_mysql_server_aws_aurora_log', 'mysql_collations', 'mysql_firewall_whitelist_rules', 'mysql_firewall_whitelist_sqli_fingerprints', 'mysql_firewall_whitelist_users', 'mysql_query_rules_fast_routing', 'mysql_group_replication_hostgroups', 'restapi_routes', 'runtime_mysql_collations', 'runtime_mysql_firewall_whitelist_rules', 'runtime_mysql_firewall_whitelist_sqli_fingerprints', 'runtime_mysql_firewall_whitelist_users', 'runtime_mysql_query_rules_fast_routing', 'runtime_mysql_group_replication_hostgroups', 'runtime_restapi_routes', 'scheduler','mysql_server_galera_log' ]
 
 misc:
   adhoc_report:
