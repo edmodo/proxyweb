@@ -242,8 +242,7 @@ Failover demo video:
 
 Recreating the demo env is recommended:
 ```buildoutcfg
-#stopping the make compose-up by pressing ctrl+c twice
-make compose-destroy
+make compose-down
 make compose-up
 ```
 
@@ -276,59 +275,68 @@ example:
 ```buildoutcfg
 global:
   hide_tables: [ '' ]
-  default_server: "proxysql_donor"
-  read_only: true
+  default_server: "proxysql"
+  read_only: false
 
 servers:
-  proxysql_donor:
+  proxysql:
     dsn:
-      - { "host": "172.17.0.1", "user": "radmin", "passwd": "radmin", "port": "16032", "db": "main" }
-
-    read_only: false
-  proxysql_satellite:
-    dsn:
-      - { "host": "172.17.0.1", "user": "radmin", "passwd": "radmin", "port": "16033", "db": "main" }
-    read_only: true
-
-  proxysql_standalone:
-    dsn:
-      - { "host": "172.17.0.1", "user": "arthur", "passwd": "zaphod", "port": "16034", "db": "main" }
-    read_only: false
-    hide_tables: [ 'mysql_aws_aurora_hostgroups', 'mysql_server_aws_aurora_failovers', 'mysql_server_aws_aurora_check_status', 'mysql_server_group_replication_log', 'mysql_galera_hostgroups', 'runtime_mysql_galera_hostgroups', 'mysql_server_aws_aurora_log' , 'mysql_server_aws_aurora_log', 'runtime_mysql_aws_aurora_hostgroups', 'runtime_mysql_server_aws_aurora_failovers', 'runtime_mysql_server_aws_aurora_check_status', 'runtime_mysql_server_group_replication_log', 'runtime_mysql_server_aws_aurora_log', 'runtime_mysql_server_aws_aurora_log', 'mysql_collations', 'mysql_firewall_whitelist_rules', 'mysql_firewall_whitelist_sqli_fingerprints', 'mysql_firewall_whitelist_users', 'mysql_query_rules_fast_routing', 'mysql_group_replication_hostgroups', 'restapi_routes', 'runtime_mysql_collations', 'runtime_mysql_firewall_whitelist_rules', 'runtime_mysql_firewall_whitelist_sqli_fingerprints', 'runtime_mysql_firewall_whitelist_users', 'runtime_mysql_query_rules_fast_routing', 'runtime_mysql_group_replication_hostgroups', 'runtime_restapi_routes', 'scheduler','mysql_server_galera_log' ]
+      - { "host": "127.0.0.1", "user": "admin", "passwd": "admin", "port": "6032", "db": "main"}
+    #hide_tables: [ 'mysql_aws_aurora_hostgroups', 'mysql_server_aws_aurora_failovers', 'mysql_server_aws_aurora_check_status', 'mysql_server_group_replication_log', 'mysql_galera_hostgroups', 'runtime_mysql_galera_hostgroups', 'mysql_server_aws_aurora_log' , 'mysql_server_aws_aurora_log', 'runtime_mysql_aws_aurora_hostgroups', 'runtime_mysql_server_aws_aurora_failovers', 'runtime_mysql_server_aws_aurora_check_status', 'runtime_mysql_server_group_replication_log', 'runtime_mysql_server_aws_aurora_log', 'runtime_mysql_server_aws_aurora_log', 'mysql_collations', 'mysql_firewall_whitelist_rules', 'mysql_firewall_whitelist_sqli_fingerprints', 'mysql_firewall_whitelist_users', 'mysql_query_rules_fast_routing', 'mysql_group_replication_hostgroups', 'restapi_routes', 'runtime_mysql_collations', 'runtime_mysql_firewall_whitelist_rules', 'runtime_mysql_firewall_whitelist_sqli_fingerprints', 'runtime_mysql_firewall_whitelist_users', 'runtime_mysql_query_rules_fast_routing', 'runtime_mysql_group_replication_hostgroups', 'runtime_restapi_routes', 'scheduler','mysql_server_galera_log' ]
+    
+#   proxysql_local_docker_no_host:
+#     dsn:
+#       - { "host": "172.17.0.1", "user": "radmin", "passwd": "radmin", "port": "6032", "db": "main"}
+#   proxysql_remote_read_only:
+#     dsn:
+#       - { "host": "10.77.10.23, "user": "radmin", "passwd": "radmin", "port": "6032", "db": "main"}
+#     read_only: true
+## it's possible to hide tables that won't be used  - like aurora, galera related ones
+#   proxysql_remote_with_hidden_tables:
+#     dsn:
+#       - { "host": "10.77.10.24", "user": "arthur", "passwd": "zaphod", "port": "6032", "db": "main"}
+#     hide_tables: [ 'mysql_aws_aurora_hostgroups', 'mysql_server_aws_aurora_failovers', 'mysql_server_aws_aurora_check_status', 'mysql_server_group_replication_log', 'mysql_galera_hostgroups', 'runtime_mysql_galera_hostgroups', 'mysql_server_aws_aurora_log' , 'mysql_server_aws_aurora_log', 'runtime_mysql_aws_aurora_hostgroups', 'runtime_mysql_server_aws_aurora_failovers', 'runtime_mysql_server_aws_aurora_check_status', 'runtime_mysql_server_group_replication_log', 'runtime_mysql_server_aws_aurora_log', 'runtime_mysql_server_aws_aurora_log', 'mysql_collations', 'mysql_firewall_whitelist_rules', 'mysql_firewall_whitelist_sqli_fingerprints', 'mysql_firewall_whitelist_users', 'mysql_query_rules_fast_routing', 'mysql_group_replication_hostgroups', 'restapi_routes', 'runtime_mysql_collations', 'runtime_mysql_firewall_whitelist_rules', 'runtime_mysql_firewall_whitelist_sqli_fingerprints', 'runtime_mysql_firewall_whitelist_users', 'runtime_mysql_query_rules_fast_routing', 'runtime_mysql_group_replication_hostgroups', 'runtime_restapi_routes', 'scheduler','mysql_server_galera_log' ]
 
 misc:
   adhoc_report:
-    - { "title": "Top 10 SELECTs by exec_time",
-        "info": "Looking at queries with big exec_time(number of execution * time to run) is a good point to start when optimizing queries.",
-        "sql": "SELECT digest,username,schemaname, SUBSTR(digest_text,0,80),count_star,sum_time, count_star*sum_time as exec_time FROM stats_mysql_query_digest WHERE digest_text LIKE 'SELECT%' ORDER BY count_star*sum_time DESC LIMIT 10;"
-    }
-
     - { "title": "Top 10 SELECTs by sum_time",
-        "info": "While eliminating the long running queries is a usually a good idea, these queries don't always have a huge impact on the overall latency (the user experience).",
-        "sql": "SELECT digest,username,schemaname, SUBSTR(digest_text,0,80),count_star,sum_time FROM stats_mysql_query_digest WHERE digest_text LIKE 'SELECT%' ORDER BY sum_time DESC LIMIT 10;"
+        "info": "Examining queries with big sum_time(number of execution * time to run) is a good place to start when optimizing queries.",
+        "sql": "SELECT digest,username,schemaname, SUBSTR(digest_text,0,80),count_star,sum_time/1000/1000 as sum_time_sec FROM stats_mysql_query_digest WHERE digest_text LIKE 'SELECT%' ORDER BY sum_time DESC LIMIT 10;"
     }
 
     - { "title": "Top 10 SELECTs by count_star",
         "info": "Caching/rewriting/even removing  frequently running queries can improve the overall performance significantly. ProxySQL support all the mentioned methods. Example: it's a good idea to cache queries often issued by connectors like `^SELECT @@max_allowed_packet`",
         "sql": "SELECT digest,username,schemaname, SUBSTR(digest_text,0,80),count_star,sum_time FROM stats_mysql_query_digest WHERE digest_text LIKE 'SELECT%' ORDER BY count_star DESC LIMIT 10;"
     }
+    - { "title": "Top 10 SELECTs by avg_time",
+        "info": "Caching/rewriting/even removing  frequently running queries can improve the overall performance significantly. ProxySQL support all the mentioned methods. Example: it's a good idea to cache queries often issued by connectors like `^SELECT @@max_allowed_packet`",
+        "sql": "SELECT digest,username,schemaname, SUBSTR(digest_text,0,80),count_star,sum_time, (sum_time/count_star)/1000 as avg_time_ms FROM stats_mysql_query_digest WHERE digest_text LIKE 'SELECT%' ORDER BY avg_time_ms DESC LIMIT 10;"
+    }
+
+    - { "title": "Top 10 writes",
+        "info": "This helps identify the most frequently running writes",
+        "sql": "SELECT digest,username,schemaname, SUBSTR(digest_text,0,80),count_star,sum_time FROM stats_mysql_query_digest where digest_text LIKE 'INSERT%' or digest_text like 'DELETE%' or digest_text like 'UPDATE%' order by count_star DESC LIMIT 10;" }
+
 
     - { "title": "Schemas with the most DMLs",
         "info": "This helps identify the schemas getting the most writes",
         "sql": "SELECT schemaname, sum(sum_time) as time_spent, sum(count_star) as sum_count_star   FROM stats_mysql_query_digest where digest_text LIKE 'INSERT%' or digest_text like 'DELETE%' or digest_text like 'UPDATE%' group by schemaname order by time_spent desc;" }
 
-    - { "title": "Top 5 schemas by exec_time",
-        "info": "List of the schemas with the highest overall exec_time",
-        "sql": "SELECT schemaname, count_star*sum_time as exec_time   FROM stats_mysql_query_digest group by schemaname order by count_star*sum_time desc limit 5;" }
+    - { "title": "Top 5 schemas by sum_time",
+        "info": "List of the schemas with the highest overall sum_time",
+        "sql":  "SELECT schemaname, sum(sum_time) as time_spent FROM stats_mysql_query_digest group by schemaname order by time_spent desc limit 5;" }
 
     - { "title": "Send the top 5 SELECTS to the readers",
-        "info": "Don't send  selects to the readers without checking the impact first as the app might read back the data immediately writing it.",
+        "info": "Don't send  selects to the readers without checking the impact first as the app might read back the data immediately after writing it.",
         "sql": "select \"replace into mysql_query_rules (username,schemaname,destination_hostgroup,active,apply,digest) values('\" || st.username || \"','\" || st.schemaname || \"',12,1,1,'\" ||  st.digest || \"');\" from stats_mysql_query_digest st left join runtime_mysql_query_rules qr on st.digest = qr.digest where  qr.rule_id is null  and digest_text LIKE 'SELECT%' ORDER BY count_star desc limit 5;" }
 
 flask:
   SECRET_KEY: "12345678901234567890"
   SEND_FILE_MAX_AGE_DEFAULT: 0
   TEMPLATES_AUTO_RELOAD: "True"
+
+
+
 ```
 #### Global
 The global `read_only` and `hide_tables` will be only used if they are not defined under the servers
