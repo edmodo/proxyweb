@@ -24,13 +24,8 @@ servers:
 
 misc:
   adhoc_report:
-    - { "title": "Top 10 SELECTs by exec_time",
-        "info": "Looking at queries with big exec_time(number of execution * time to run) is a good point to start when optimizing queries.",
-        "sql": "SELECT digest,username,schemaname, SUBSTR(digest_text,0,80),count_star,sum_time, count_star*sum_time as exec_time FROM stats_mysql_query_digest WHERE digest_text LIKE 'SELECT%' ORDER BY count_star*sum_time DESC LIMIT 10;"
-    }
-
     - { "title": "Top 10 SELECTs by sum_time",
-        "info": "While eliminating the long running queries is a usually a good idea, these queries don't always have a huge impact on the overall latency (the user experience).",
+        "info": "Examining queries with big sum_time(number of execution * time to run) is a good place to start when optimizing queries.",
         "sql": "SELECT digest,username,schemaname, SUBSTR(digest_text,0,80),count_star,sum_time FROM stats_mysql_query_digest WHERE digest_text LIKE 'SELECT%' ORDER BY sum_time DESC LIMIT 10;"
     }
 
