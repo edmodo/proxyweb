@@ -33,14 +33,17 @@ misc:
         "info": "Caching/rewriting/even removing  frequently running queries can improve the overall performance significantly. ProxySQL support all the mentioned methods. Example: it's a good idea to cache queries often issued by connectors like `^SELECT @@max_allowed_packet`",
         "sql": "SELECT digest,username,schemaname, SUBSTR(digest_text,0,80),count_star,sum_time FROM stats_mysql_query_digest WHERE digest_text LIKE 'SELECT%' ORDER BY count_star DESC LIMIT 10;"
     }
+    - { "title": "Top 10 writes",
+        "info": "This helps identify the most frequently running writes",
+        "sql": "SELECT digest,username,schemaname, SUBSTR(digest_text,0,80),count_star,sum_time FROM stats_mysql_query_digest where digest_text LIKE 'INSERT%' or digest_text like 'DELETE%' or digest_text like 'UPDATE%' order by count_star DESC LIMIT 10;" }
 
     - { "title": "Schemas with the most DMLs",
         "info": "This helps identify the schemas getting the most writes",
         "sql": "SELECT schemaname, sum(sum_time) as time_spent, sum(count_star) as sum_count_star   FROM stats_mysql_query_digest where digest_text LIKE 'INSERT%' or digest_text like 'DELETE%' or digest_text like 'UPDATE%' group by schemaname order by time_spent desc;" }
 
-    - { "title": "Top 5 schemas by exec_time",
-        "info": "List of the schemas with the highest overall exec_time",
-        "sql": "SELECT schemaname, count_star*sum_time as exec_time   FROM stats_mysql_query_digest group by schemaname order by count_star*sum_time desc limit 5;" }
+    - { "title": "Top 5 schemas by sum_time",
+        "info": "List of the schemas with the highest overall sum_time",
+        "sql":  "SELECT schemaname, sum(sum_time) as time_spent FROM stats_mysql_query_digest group by schemaname order by time_spent desc limit 5;" }
 
     - { "title": "Send the top 5 SELECTS to the readers",
         "info": "Don't send  selects to the readers without checking the impact first as the app might read back the data immediately after writing it.",
