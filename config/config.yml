@@ -48,7 +48,7 @@ misc:
         "sql": "SELECT schemaname, count_star*sum_time as exec_time   FROM stats_mysql_query_digest group by schemaname order by count_star*sum_time desc limit 5;" }
 
     - { "title": "Send the top 5 SELECTS to the readers",
-        "info": "Don't send  selects to the readers without checking the impact first as the app might read back the data immediately writing it.",
+        "info": "Don't send  selects to the readers without checking the impact first as the app might read back the data immediately after writing it.",
         "sql": "select \"replace into mysql_query_rules (username,schemaname,destination_hostgroup,active,apply,digest) values('\" || st.username || \"','\" || st.schemaname || \"',12,1,1,'\" ||  st.digest || \"');\" from stats_mysql_query_digest st left join runtime_mysql_query_rules qr on st.digest = qr.digest where  qr.rule_id is null  and digest_text LIKE 'SELECT%' ORDER BY count_star desc limit 5;" }
 
 flask:
