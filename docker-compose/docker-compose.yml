@@ -216,7 +216,6 @@ services:
     command: >
         bash -c "
             set -o xtrace
-            sleep 10
             sysbench \
                 --db-driver=mysql \
                 --mysql-host=proxysql_standalone \
